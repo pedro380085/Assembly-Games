@@ -4,7 +4,7 @@ Observe, este repositório existe por motivações de preguiça alheia e rebeldi
 
 Uma grande fatalidade das universidades e seus cursos de graduação são seus esforços solicitados sem a mínima necessidade que aquela energia fosse despendida.
 
-**Eu simplesmente odeio** ter que fazer trabalhos sem um propósito que não seja passar na matéria. Trabalhar por trabalhar, melhor fazer algo produtivo e apenas estudar para as provas. Não há porque gastar nossos esforços programando Assembly, por exemplo.
+**É sofrível** ter que fazer trabalhos sem um propósito que não seja passar na matéria. Trabalhar por trabalhar, melhor fazer algo produtivo e apenas estudar para as provas. Não há porque gastar nossos esforços programando Assembly, por exemplo.
 
 Como não é possível mudar nosso sistema educacional, vamos então facilitar a vida de nossos coleguinhas. Esse repositório então foi feito para ser acessado, indexado e encontrado. Esse README existe para que você, coleguinha que veio depois de mim, possa pesquisar no Google por ICMC e space invaders, ou forca, ou naves, ou jogo da velha ou qualquer outro código escrito para a linguagem Assembly (utilizando o MIPS ou até o brilhante Assembly ICMC) e receber aquilo que exatamente precisa para o trabalho de sexta à noite.
 
