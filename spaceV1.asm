@@ -1,4 +1,4 @@
-# MIPS assembly program written by D.Taylor to be snake.
+# MIPS assembly program written by Pedro Góes
 
 .data
 # Store all important and starting data in this section, and make any other necessary notes
@@ -17,18 +17,6 @@ drawColour:		.word 0x0022EE22		# Store colour to draw objects
 bgColour:		.word 0x00000000		# Store colour to draw background
 shotColour:         	.word 0x00EE2222      		# Store color for shot
 monsterColour:         	.word 0x00859EE2      		# Store color for monster
-
-# I should explain at this point that I'll be using the otherwise unused alpha channel (leftmost two bytes) to store additional information relating to each tile.
-							# Alpha channel meanings (00 to FF) should be noted also:
-							# 00 to 31 kill player
-								# 00 = wall
-								# 01 = snake moving right
-								# 02 = snake moving up
-								# 03 = snake moving left
-								# 04 = snake moving down
-							# 32 to 3B grow player
-								# 32 = food
-							# FF is empty space
 							
 .text
 # Main and other methods go here. Hopefully they'll cooperate and play nicely, because 
@@ -92,7 +80,7 @@ Main_gameLoop:
 			jal Sleep			# Sleep for 60 miliseconds so that the game is playable
 			nop
 			
-			b Main_shotBegin			# Jump to skip reducing tail length
+			b Main_shotBegin	# Start game
 			nop
 
 ###############
@@ -100,7 +88,7 @@ Main_gameLoop:
 ###############
 Main_shotBegin:
 			lw $s7, bgColour
-			or $a0, $zero, $s7		# Remove tail peice
+			or $a0, $zero, $s7		# Reset background
 			or $a1, $zero, $s1		# Load addresss
 			jal PaintMemory			# Call the paint function
 			nop
@@ -108,11 +96,14 @@ Main_shotBegin:
 			or $a0, $zero, $s1 			# Get player's head position
 			jal AddressToCoords		# Calculate position in stage memory
 			nop
+			ori $a0, $zero, 0
+			beq $v0, $a0, Main_monsterBegin
 			lh $a0, stageWidth
+			subi $a0, $a0, 1
 			beq $v0, $a0, Main_monsterBegin
 			
 			or $t7, $zero, $s5
-			or $a0, $zero, $s1		# Set a0 to current possition
+			or $a0, $zero, $s1		# Set a0 to current position
 			or $a1, $zero, 1		# Set distance to one
 							
 Main_shotRight:
@@ -150,10 +141,10 @@ Main_shotNone:
 			nop
 
 Main_shotDone:
-			or $s1, $zero, $v0		# Store player's new shot possition
+			or $s1, $zero, $v0		# Store player's new shot position
 
 			lw $s7, shotColour
-			or $a0, $zero, $s7		# Remove tail peice
+			or $a0, $zero, $s7		# Reset background
 			or $a1, $zero, $s1		# Load addresss
 			jal PaintMemory			# Call the paint function
 			nop
@@ -164,15 +155,15 @@ Main_shotDone:
 
 Main_monsterBegin:
 			lw $s7, bgColour
-			or $a0, $zero, $s7		# Remove tail peice
-			or $a1, $zero, $s2		# Load addresss
-			jal PaintMemory			# Call the paint function
+			or $a0, $zero, $s7		# Reset background
+			or $a1, $zero, $s2		
+			jal PaintMemory			
 			nop
 			
-			jal GetRandomDir
+			jal GetRandomDir    		# Get random direction
 			nop
 			or $t7, $zero, $v0
-			or $a0, $zero, $s2		# Set a0 to current possition
+			or $a0, $zero, $s2		# Set a0 to current position
 			or $a1, $zero, 1		# Set distance to one
 			
 Main_monsterRight:
@@ -210,30 +201,30 @@ Main_monsterNone:
 			nop
 
 Main_monsterDone:
-			or $a3, $zero, $v0
+			or $a3, $zero, $v0		# Save temporarily
 
-			lh $a0, stageWidth 			# Get player's head position
+			lh $a0, stageWidth 		# Get our screen width
 			lh $a1, stageHeight			
 			jal CoordsToAddress		# Calculate position in stage memory
 			nop
 			sub $a2, $v0, $a3
-			bltz $a2, Main_monsterBegin
+			bltz $a2, Main_monsterBegin	# Compare out of bounds
 			nop
 
-			ori $a0, $zero, 0 			# Get player's head position
+			ori $a0, $zero, 0
 			ori $a1, $zero, 0			
 			jal CoordsToAddress		# Calculate position in stage memory
 			nop
 			sub $a2, $a3, $v0
-			bltz $a2, Main_monsterBegin
+			bltz $a2, Main_monsterBegin	# Compare out of bounds
 			nop
 
-			or $s2, $zero, $a3		# Store player's new tail possition
+			or $s2, $zero, $a3		# Store monster's new position
 
 			lw $s7, monsterColour
-			or $a0, $zero, $s7		# Remove tail peice
-			or $a1, $zero, $s2		# Load addresss
-			jal PaintMemory			# Call the paint function
+			or $a0, $zero, $s7		# Paint monster
+			or $a1, $zero, $s2		
+			jal PaintMemory			
 			nop
 
 ###############
@@ -251,7 +242,7 @@ Main_spaceBegin:
 			nop
 			or $t6, $zero, $v0		# Backup direction from keyboard
 			
-			or $a0, $zero, $s0		# Load possition
+			or $a0, $zero, $s0		# Load position
 			ori $a1, $zero, 1		# Set distance to move
 
 Main_spaceRight:
@@ -497,7 +488,7 @@ GetKey_down:
 GetKey_space:
 		bne, $t0, 32, GetKey_none
 		nop
-		ori $v0, $zero, 0x05000000	# Down
+		ori $v0, $zero, 0x05000000	# Space
 		j GetKey_done
 		nop
 		
@@ -515,7 +506,7 @@ FillMemory:
 		lh $a2, stageHeight
 		multu $a1, $a2			# Multiply screen width by screen height
 		nop
-		mflo $a2			# Retreive total tiles
+		mflo $a2					# Retrieve total tiles
 		sll $a2, $a2, 2			# Multiply by 4
 		add $a2, $a2, $gp		# Add global pointer
 		
@@ -538,7 +529,7 @@ GetRandomPos:
 		lh $a2, stageHeight
 		multu $a1, $a2			# Multiply screen width by screen height
 		nop
-		mflo $a3			# Retreive total tiles
+		mflo $a3					# Retrieve total tiles
 		sub $a3, $a3, 2			# take two for width boundaries
 		sub $a3, $a3, $a2		# take two stage widths for height boundaries
 		sub $a3, $a3, $a2
