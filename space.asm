@@ -1,10 +1,13 @@
 # MIPS assembly program written by Pedro Góes
 
+# Additions since v1
+#	- Default Scene
+
 .data
 # Store all important and starting data in this section, and make any other necessary notes
 # even if it does endup huge being enourmous.
 
-stageWidth:		.half 32			# Store stage size
+stageWidth:			.half 32			# Store stage size
 stageHeight:		.half 32			# Usual settings $gp, 32x32, 16xScaling, 512x512
 
 spaceX:			.half 7				# Store player position in memory
@@ -62,7 +65,34 @@ Main_init:
 			or $a1, $zero, $s0		# Load position
 			jal PaintMemory			# Call the paint function
 			nop
-			
+
+Scene_paint:
+			# Load some scene defaults
+
+			# Object on screen
+			ori $a0, $zero, 11 			# Random position
+			ori $a1, $zero, 10			
+			jal CoordsToAddress
+			or $a1, $zero, $v0			# Store stage memory position
+			ori $a0, $zero, 0x00DE3875	# Store random colour
+			jal PaintMemory				# Call the paint function
+			nop
+
+			ori $a0, $zero, 11
+			ori $a1, $zero, 11			
+			jal CoordsToAddress
+			or $a1, $zero, $v0
+			ori $a0, $zero, 0x00DE3875
+			jal PaintMemory
+			nop
+
+			ori $a0, $zero, 10
+			ori $a1, $zero, 11			
+			jal CoordsToAddress
+			or $a1, $zero, $v0
+			ori $a0, $zero, 0x00DE3875
+			jal PaintMemory
+			nop
 
 Main_waitLoop:
 			# Wait for the player to press a key
