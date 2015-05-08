@@ -71,15 +71,23 @@ Scene_paint:
 
 			# Object on screen
 			ori $a0, $zero, 11 			# Random position
-			ori $a1, $zero, 10			
+			ori $a1, $zero, 10
 			jal CoordsToAddress
 			or $a1, $zero, $v0			# Store stage memory position
 			ori $a0, $zero, 0x00DE3875	# Store random colour
 			jal PaintMemory				# Call the paint function
 			nop
 
+			ori $a0, $zero, 12
+			ori $a1, $zero, 11
+			jal CoordsToAddress
+			or $a1, $zero, $v0
+			ori $a0, $zero, 0x00DE3875
+			jal PaintMemory
+			nop
+
 			ori $a0, $zero, 11
-			ori $a1, $zero, 11			
+			ori $a1, $zero, 12
 			jal CoordsToAddress
 			or $a1, $zero, $v0
 			ori $a0, $zero, 0x00DE3875
@@ -87,10 +95,51 @@ Scene_paint:
 			nop
 
 			ori $a0, $zero, 10
-			ori $a1, $zero, 11			
+			ori $a1, $zero, 11
 			jal CoordsToAddress
 			or $a1, $zero, $v0
 			ori $a0, $zero, 0x00DE3875
+			jal PaintMemory
+			nop
+
+			# Another object
+			ori $a0, $zero, 0
+			ori $a1, $zero, 31
+			jal CoordsToAddress
+			or $a1, $zero, $v0
+			ori $a0, $zero, 0x00E7A713
+			jal PaintMemory
+			nop
+
+			ori $a0, $zero, 1
+			ori $a1, $zero, 30
+			jal CoordsToAddress
+			or $a1, $zero, $v0
+			ori $a0, $zero, 0x00E7A713
+			jal PaintMemory
+			nop
+
+			ori $a0, $zero, 2
+			ori $a1, $zero, 29
+			jal CoordsToAddress
+			or $a1, $zero, $v0
+			ori $a0, $zero, 0x00E7A713
+			jal PaintMemory
+			nop
+
+			ori $a0, $zero, 3
+			ori $a1, $zero, 28
+			jal CoordsToAddress
+			or $a1, $zero, $v0
+			ori $a0, $zero, 0x00E7A713
+			jal PaintMemory
+			nop
+
+			ori $a0, $zero, 4
+			ori $a1, $zero, 27
+			jal CoordsToAddress
+			or $a1, $zero, $v0
+			ori $a0, $zero, 0x00E7A713
 			jal PaintMemory
 			nop
 
